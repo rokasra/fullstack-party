@@ -11,7 +11,6 @@
             text-decoration: none;
             font-size: 14px;
         }
-
     </style>
 {% endblock %}
 
@@ -68,7 +67,6 @@
         </table>
     {% endif %}
 
-
     {% include 'pagination.html.twig' with {
         currentFilters: { 'state': state },
         currentPage: page,
@@ -76,5 +74,4 @@
         lastPage: totalPages,
         showAlwaysFirstAndLast: true
     } %}
-
 {% endblock %}
