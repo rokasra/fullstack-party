@@ -27,3 +27,16 @@ If you found this task it means we are looking for you!
 - Structure! WE LOVE STRUCTURE!
 - Maybe You have an idea how it should interact with users? Do it! Its on you!
 - Have fun!
+
+## Requirements
+
+- Docker version 17.x-ce or higher
+- Docker-compose 1.11.2 or higher
+
+## Run application
+
+- docker-compose build
+- docker-compose up -d
+- docker exec -it -u 1000 fullstackparty_app bash
+- composer install
+- Go to: http://localhost:5000

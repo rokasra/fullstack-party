@@ -1,0 +1,80 @@
+{% extends 'default/abstract_default.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        .issues-list-table, .issues-list-table th, .issues-list-table td {
+            border: 1px solid black;
+        }
+        .state-table .active {
+            color: red;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block mainBody %}
+    {% set stateOpen = constant('App\\Service\\GithubApiManager::STATE_OPEN') %}
+    {% set stateClosed = constant('App\\Service\\GithubApiManager::STATE_CLOSED') %}
+    <table class="state-table">
+        <tr>
+            <td>
+                <a
+                    href="{{ path('app_default_index', {'state': stateOpen}) }}"
+                    {% if state == stateOpen %}class="active"{% endif %}
+                >{{ openCount }} Open</a>
+            </td>
+            <td>
+                <a
+                    href="{{ path('app_default_index', {'state': stateClosed}) }}"
+                    {% if state == stateClosed %}class="active"{% endif %}
+                >{{ closedCount }} Closed</a>
+            </td>
+        </tr>
+    </table>
+
+    {% if issuesList.items|length > 0 %}
+        <table class="issues-list-table">
+            {% for item in issuesList.items %}
+                <tr>
+                    <td>
+                        {{ item.title }}
+                        {% if item.labels|length > 0 %}
+                            {% for label in item.labels %}
+                                <span style="background-color: {{ '#' ~ label.color }}">{{ label.name }}</span>
+                            {% endfor %}
+                        {% endif %}
+                        <div>#{{ item.number }}
+                            {% if item.state == stateOpen %}
+                                opened {{ item.created_at|time_diff }}
+                            {% else %}
+                                closed {{ item.closed_at|time_diff }}
+                            {% endif %}
+                            by {{ item.user.login }}</div>
+                    </td>
+                    <td>
+                        {% if item.comments > 0 %}
+                            <div>Comments: {{ item.comments }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set exp = item.url|split('/') %}
+                        <a href="{{ path('app_default_issue', {'user': exp[4], 'repository': exp[5], 'number': exp[7]}) }}">More</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+    {% include 'pagination.html.twig' with {
+        currentFilters: { 'state': state },
+        currentPage: page,
+        paginationPath: 'app_default_index',
+        lastPage: totalPages,
+        showAlwaysFirstAndLast: true
+    } %}
+
+{% endblock %}

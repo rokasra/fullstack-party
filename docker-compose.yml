@@ -1,0 +1,10 @@
+version: '2'
+services:
+    app:
+        build: .
+        container_name: fullstackparty_app
+        restart: always
+        volumes:
+            - .:/var/www/html
+        ports:
+            - '5000:80'

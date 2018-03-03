@@ -1,0 +1,8 @@
+hwi_oauth:
+    firewall_names: [secured_area]
+    resource_owners:
+        github:
+            type:                github
+            client_id:           '%app.service.github_api.client_id%'
+            client_secret:       '%app.service.github_api.client_secret%'
+            scope:               'user:email,public_repo'

@@ -1,0 +1,88 @@
+{% extends 'default/abstract_default.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .issue-title {
+            font-size: 24px;
+        }
+        .issue-title .number {
+            background-color: #e5e5e5;
+        }
+        .state-label-open {
+            background-color: #91e560;
+            margin-right: 5px;
+        }
+        .state-label-closed {
+            background-color: red;
+            margin-right: 5px;
+        }
+        .issue-block {
+            margin-bottom: 20px;
+        }
+        .issue-block .comments {
+            margin-left: 5px;
+        }
+        .comments-block .comment {
+            background-color: #ededed;
+        }
+        .comments-block .logo {
+            width: 60px;
+        }
+        .comments-block td {
+            padding-bottom: 20px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block mainBody %}
+    <div class="back-button"><a href="{{ path('app_default_index', {'state': issue.state}) }}">Back to issues</a></div>
+    <div class="issue-block">
+        <div class="issue-title">{{ issue.title }} <span class="number">#{{ issue.number }}</span></div>
+        <div>
+            <span class="state-label-{{ issue.state }}">{{ issue.state|upper }}</span>
+            <span>{{ issue.user.login }}</span>
+            <span>
+                {{ issue.state }}
+                this issue
+                {% if issue.state == constant('App\\Service\\GithubApiManager::STATE_OPEN') %}
+                    {{ issue.created_at|time_diff }}
+                {% else %}
+                    {{ issue.closed_at|time_diff }}
+                {% endif %}
+            </span>
+            <span class="comments">{{ issue.comments }} comments</span>
+        </div>
+    </div>
+    {% if issue.comments > 0 %}
+        <div class="comments-block">
+            <table>
+                {% for comment in comments %}
+                        <tr>
+                            <td class="logo">
+                                <img width="50" height="50" src="{{ comment.user.avatar_url }}" />
+                            </td>
+                            <td class="comment-col">
+                                <div class="comment">
+                                    <div>{{ comment.user.login }} commented {{ comment.created_at|time_diff }}</div>
+                                    <hr>
+                                    <div>{{ comment.body }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                {% endfor %}
+            </table>
+            {% include 'pagination.html.twig' with {
+                currentFilters: { 'user': user, 'repository': repository, 'number': number },
+                currentPage: page,
+                paginationPath: 'app_default_issue',
+                lastPage: totalPages,
+                showAlwaysFirstAndLast: true
+            } %}
+        </div>
+    {% endif %}
+{% endblock %}
